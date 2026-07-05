@@ -19,7 +19,7 @@ const params = new URLSearchParams(window.location.search);
 const title = params.get('title') || 'Appointment';
 const start = params.get('start');
 const end = params.get('end');
-const location = params.get('location') || '';
+const eventLocation = params.get('location') || '';
 const description = params.get('description') || '';
 
 if (!start || !end) {
@@ -41,7 +41,7 @@ DTSTART:${formatDate(new Date(start))}
 DTEND:${formatDate(new Date(end))}
 SUMMARY:${title}
 DESCRIPTION:${description}
-LOCATION:${location}
+LOCATION:${eventLocation}
 STATUS:CONFIRMED
 SEQUENCE:0
 END:VEVENT
