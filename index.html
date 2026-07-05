@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add to Calendar</title>
+</head>
+<body>
+
+<p>Preparing your calendar invitation...</p>
+
+<script>
+function formatDate(date) {
+  return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+}
+
+const params = new URLSearchParams(window.location.search);
+
+const title = params.get('title') || 'Appointment';
+const start = params.get('start');
+const end = params.get('end');
+const location = params.get('location') || '';
+const description = params.get('description') || '';
+
+if (!start || !end) {
+  document.body.innerHTML = "<h2>Missing appointment information.</h2>";
+  throw new Error("Missing dates");
+}
+
+const uid = Date.now() + "@theaccompanimentcollaborative.com";
+
+const ics = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//The Accompaniment Collaborative, LLC//Appointments//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:${uid}
+DTSTAMP:${formatDate(new Date())}
+DTSTART:${formatDate(new Date(start))}
+DTEND:${formatDate(new Date(end))}
+SUMMARY:${title}
+DESCRIPTION:${description}
+LOCATION:${location}
+STATUS:CONFIRMED
+SEQUENCE:0
+END:VEVENT
+END:VCALENDAR`;
+
+const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+
+const url = URL.createObjectURL(blob);
+
+const link = document.createElement('a');
+link.href = url;
+link.download = 'appointment.ics';
+document.body.appendChild(link);
+link.click();
+
+document.body.innerHTML = `
+<h2>Your calendar invitation is ready.</h2>
+<p>If your download didn't start automatically, click the button below.</p>
+<p><a href="${url}" download="appointment.ics">Download Calendar Invitation</a></p>
+`;
+</script>
+
+</body>
+</html>
